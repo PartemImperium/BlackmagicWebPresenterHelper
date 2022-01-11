@@ -2,15 +2,10 @@
 
 // See https://aka.ms/new-console-template for more information
 Console.WriteLine("Hello, World!");
-// Create a TcpClient.
-// Note, for this client to work you need to have a TcpServer
-// connected to the same address as specified by the server, port
-// combination.
-Int32 port = 9977;
-string server = 
-//"127.0.0.1";
-"10.1.1.69";
-TcpClient client = new TcpClient(server, port);
+
+var config = new AppConfig();
+
+TcpClient client = new TcpClient(config.ServerHost, config.ServerPort);
 
 var streamSettings = new StreamSettingsBlock()
 {
