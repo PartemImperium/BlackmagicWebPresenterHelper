@@ -4,6 +4,9 @@ using System.Text;
 
 public class WebPresenterSerializer 
 {
+
+    public byte[] SerializeBytes<T>(T input) where T : new() => System.Text.Encoding.ASCII.GetBytes(Serialize(input));
+
     public string Serialize<T>(T input) where T : new()
     {
         StringBuilder output = new();
