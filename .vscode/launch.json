@@ -9,9 +9,9 @@
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/bin/Debug/net6.0/test-bmd-tcp.dll",
+            "program": "${workspaceFolder}/src/BlackmagicWebPresenterHelper.Batch/bin/Debug/net6.0/test-bmd-tcp.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src",
+            "cwd": "${workspaceFolder}/src/BlackmagicWebPresenterHelper.Batch",
             "stopAtEntry": false,
             "console": "internalConsole"
         }

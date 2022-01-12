@@ -7,7 +7,7 @@ var streamSettings = new StreamSettingsBlock()
 
 var serializer = new WebPresenterSerializer();
 
-using var webPresenterCleint = new WebPresenterClient(config,serializer);
+using var webPresenterCleint = new WebPresenterClient(config, serializer);
 webPresenterCleint.Initialize();
 
 await webPresenterCleint.SendMessageAsync<StreamSettingsBlock,StreamSettingsBlock>(streamSettings);
