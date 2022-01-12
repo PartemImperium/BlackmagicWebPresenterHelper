@@ -15,15 +15,21 @@ public class WebPresenterClient : IDisposable
         Serializer = webPresenterSerializer;
     }
 
+    private object initializeLock = new();
     public void Initialize()
     {
-        //TODO: Add lock objects to make sure this is thread safe... For now ill just be careful
         if (!IsInitialized)
         {
-            IsInitialized = true;
+            lock (initializeLock)
+            {
+                if (!IsInitialized)
+                {
+                    IsInitialized = true;
 
-            ClientConnection = new(Config.ServerHost, Config.ServerPort);
-            ClientStream = ClientConnection.GetStream();
+                    ClientConnection = new(Config.ServerHost, Config.ServerPort);
+                    ClientStream = ClientConnection.GetStream();
+                }
+            }
         }
     }
 
