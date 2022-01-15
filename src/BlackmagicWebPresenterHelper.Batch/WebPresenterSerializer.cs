@@ -35,15 +35,68 @@ public class WebPresenterSerializer
         return output.ToString();
     }
 
-    public T Deserialize<T>(string input) where T : new()
+    public T? Deserialize<T>(string input) where T : new()
     {
-        var lines = input.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
-                         .ToList();
+        var lines = SplitOnNewLine(input);
 
-        T output = new();
-        Type oType = output.GetType();
+        var output = (T?)Deserialize(lines, typeof(T));
 
-        foreach (var line in lines) 
+        return output;
+    }
+
+    // public object? Deserialize(string input) 
+    // {
+    //     var lines = SplitOnNewLine(input);
+
+    //     return Deserialize(lines);
+    // }
+
+    //public object? Deserialize(List<string> input) 
+    //{
+        //var type = new Type();//TODO: find what type the object is and call Deserialize(List<string> input, Type type)
+
+        //return Deserialize(input,type);
+    //}
+
+    // public List<object?> DeserializeMulti(string input) 
+    // {
+    //     var lines = SplitOnNewLine(input);
+
+    //     return DeserializeMulti(lines);
+    // }
+
+    // public List<object?> DeserializeMulti(List<string> input)
+    // {
+    //     List<List<string>> objectGroups = new();
+
+    //     List<string> currentGroup = new();
+    //     foreach(var line in input)
+    //     {
+    //         currentGroup.Add(line);
+    //         if (string.IsNullOrEmpty(line))
+    //         {
+    //             objectGroups.Add(currentGroup);
+    //             currentGroup = new();
+    //         }
+    //     }
+
+    //     // In theory everything should have a extra new line in it. But hey theory isnt practice... Check to make sure that if it isnt here throw it in the list anyways.
+    //     if (currentGroup.Count > 0)
+    //     {
+    //         objectGroups.Add(currentGroup);
+    //     }
+
+    //     return objectGroups.Select(g => Deserialize(g)).ToList();
+    // }
+
+    public object? Deserialize(List<string> input, Type type)
+    {
+        if (type.GetConstructor(Type.EmptyTypes) == null){
+            return null;
+        }
+        object? output = Activator.CreateInstance(type);
+
+        foreach (var line in input) 
         {
             if (!string.IsNullOrEmpty(line))
             {
@@ -54,15 +107,18 @@ public class WebPresenterSerializer
 
                 if (!string.IsNullOrEmpty(value))//TODO: Make this read the field and create the correct object here
                 {
-                    var memberInfo = GetReflectionInfoFromName<T>(field);
+                    var memberInfo = GetReflectionInfoFromName(field,type);
 
                     memberInfo?.SetValue(output, Convert.ChangeType(value, memberInfo.PropertyType), null);
                 }
             }
         }
+
         return output;
     }
-
+    
+    private List<string> SplitOnNewLine(string input) => input.Split(new string[] { "\r\n", "\r", "\n" }, StringSplitOptions.None)
+                                                              .ToList();
     private DescriptionAttribute? GetDescription(MemberInfo prop)
         => prop.GetCustomAttributes(typeof(DescriptionAttribute), true)
                 .Cast<DescriptionAttribute>()
